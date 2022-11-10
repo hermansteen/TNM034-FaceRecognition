@@ -2,13 +2,19 @@ function maskedIm = eyemap(im)
 %EYEMASK Returns the eye mask of an image
 %   Detailed explanation goes here
     YCbCr = rgb2ycbcr(im);
-    Y = YCbCr(:,:,1);
-    Cb = YCbCr(:,:,2);
-    Cr = YCbCr(:,:,3);
-    g = 1./3;
+    Y = double(YCbCr(:,:,1));
+    Cb = double(YCbCr(:,:,2));
+    Cr = double(YCbCr(:,:,3));
+    g = 1/3;
+    
     ccb = Cb.^2;
+    ccb = rescale(ccb,0,255);
+    
     ccr = (1 - Cr).^2;
+    ccr = rescale(ccr,0,255);
+    
     cbcr = Cb./Cr;
+    cbcr = rescale(cbcr,0,255);
 
     eyeMapC = g*(ccb + ccr + cbcr);
 
@@ -19,5 +25,9 @@ function maskedIm = eyemap(im)
     eyeMapL = o./p;
     eyeMap = eyeMapL.*eyeMapC;
     maskedIm = imdilate(eyeMap,SE);
+    % maskedIm ska maskas här, men med vad?
+    % maskedIm = maskedIm.*mask;
+    maskedIm = rescale(maskedIm,0,255);
+    maskedIm = uint8(maskedIm);
 end
 
