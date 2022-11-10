@@ -4,9 +4,9 @@ function whitepointImage = whitepoint(image)
 
 B = reshape(image(:,:,:), [],3);
 
-Ar = chanelMean(B(:,1));
-Ag = chanelMean(B(:,2));
-Ab = chanelMean(B(:,3));
+Ar = channelMean(B(:,1));
+Ag = channelMean(B(:,2));
+Ab = channelMean(B(:,3));
 
 alpha = Ag/Ar;
 beta = Ag/Ab;

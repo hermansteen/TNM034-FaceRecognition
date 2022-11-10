@@ -19,13 +19,13 @@ function maskedIm = eyemap(im)
     eyeMapC = g*(ccb + ccr + cbcr);
 
     %Morphologically dilate and erode the image to create a mask
-    SE = strel('disk', 10);
+    SE = strel('disk', 6);
     o = imdilate(Y,SE);
     p = imerode(Y,SE);
     eyeMapL = o./p;
     eyeMap = eyeMapL.*eyeMapC;
     maskedIm = imdilate(eyeMap,SE);
-    % maskedIm ska maskas här, men med vad?
+    % maskedIm ska maskas här med skin tone masken
     % maskedIm = maskedIm.*mask;
     maskedIm = rescale(maskedIm,0,255);
     maskedIm = uint8(maskedIm);
