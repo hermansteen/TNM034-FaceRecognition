@@ -3,48 +3,38 @@ function mask = skinMask(image)
 %  Masks a facial image to get the mask corresponding to only the skin
 %  Used for skin detection
 
-%% Convert image from RGB to YCrCb
-
-YCbCr = rgb2ycbcr(image);
-
-% Separate Y, Cb, and Cr
-Y = YCbCr(:,:,1);
-Cb = YCbCr(:,:,2);
-Cr = YCbCr(:,:,3);
-
 % Get number of rows and columns in the image
-[rows,cols] = size(Y);
+[rows,cols] = size(image);
 
 %% Get the the probability for a pixel value to appear and calculate the avergage
 
 % Calculate the maximum intensity value(m) in the image
-m = max(max(Y));
+m = uint16(max(max(image)));
 
 % Calculate the number of pixels in the image
 N = rows * cols;
 
 % Calculate the number of intensity occurences(n), probability(p) and
 % average of the image
-p = [];
-n = [];
+p = zeros(1,m+1);
 average = 0.0;
-
-for i = 1:m
-    n(i) = sum(Y(:) == i);
-    p(i) = n(i)/N;
-    average = average + i*p(i);
+for i = 0:m
+    n = sum(image(:) == i);
+    p(i+1) = n/N;
+    average = average + i*p(i+1);
 end
 
+
 %% Calculate the best threshold for the mask
-% T is the current
+% T is the current threshold
 omega = 0.0;
 my = 0.0;
 delta2 = [];
 
-for T = 1:m
-    for i = 1:T
-        omega = omega + p(i);
-        my = my + i*p(i);
+for T = 0:m
+    for j = 1:T
+        omega = omega + p(j+1);
+        my = my + j*p(j+1);
     end
 
     omega0 = omega;
@@ -54,7 +44,7 @@ for T = 1:m
     my1 = (average - my) / (1.0 - omega);
 
     graySampleAverage = omega0*my0 + omega1*my1;
-    delta2(T) = (graySampleAverage*omega - my)^2 / (omega*(1.0 - omega));
+    delta2(T+1) = (graySampleAverage*omega - my)^2 / (omega*(1.0 - omega));
 end
 
 bestThreshold = max(delta2);
