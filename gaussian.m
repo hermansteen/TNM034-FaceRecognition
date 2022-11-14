@@ -24,6 +24,7 @@ end
 image = reshape(im(1,:), height,width);
 
 image = uint8(rescale(image,0,255));
+image = histeq(image);
 
 
 end
