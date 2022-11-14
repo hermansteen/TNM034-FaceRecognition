@@ -1,4 +1,4 @@
-function maskedIm = eyemap(im)
+function maskedIm = eyemap(im, mask)
 %EYEMASK Returns the eye mask of an image
 %   Detailed explanation goes here
     YCbCr = rgb2ycbcr(im);
@@ -25,8 +25,7 @@ function maskedIm = eyemap(im)
     eyeMapL = o./p;
     eyeMap = eyeMapL.*eyeMapC;
     maskedIm = imdilate(eyeMap,SE);
-    % maskedIm ska maskas här med skin tone masken
-    % maskedIm = maskedIm.*mask;
+    maskedIm = maskedIm.*mask;
     maskedIm = rescale(maskedIm,0,255);
     maskedIm = uint8(maskedIm);
 end

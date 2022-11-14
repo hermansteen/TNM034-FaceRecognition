@@ -1,4 +1,4 @@
-function whitepointImage = whitepoint(image)
+function whitepointImage = whitePoint(image)
 %Calculates the whitepoint compensated image of an rgb image.
 
 
