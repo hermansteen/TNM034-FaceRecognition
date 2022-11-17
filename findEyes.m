@@ -1,7 +1,6 @@
 function eyes = findEyes(eyemapped)
 
 eyemappedB = eyemapped > 175;
-imshow(eyemappedB);
 
 stats = regionprops(eyemappedB, 'Centroid', 'Circularity');
 stats = struct2table(stats);

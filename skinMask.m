@@ -1,8 +1,7 @@
 function mask = skinMask(image)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-level = graythresh(image);
-mask = imbinarize(image, level);
+mask = imbinarize(image);
 labeledMask = bwlabel(mask, 8);
 
 stats = regionprops(mask, 'EulerNumber', 'BoundingBox', 'Area');
@@ -14,7 +13,8 @@ for i = 1:size(stats)
     
     width = abs(box(3) - (1));
     height = abs(box(4) - box(2));
-    whratio = height/width;
+    whratio = width/height;
+    hwratio = height/width;
     areaRatio = area/(width*height);
     
     if numberOfHoles == 1
@@ -22,12 +22,9 @@ for i = 1:size(stats)
         continue;
     end
     
-    if whratio > 2.0 || whratio < 0.8
-        if whratio > 2.0
-        
-        else
-            labeledMask(labeledMask == i) = 0;
-        end
+    if hwratio < 0.8
+        labeledMask(labeledMask == i) = 0;
+        continue;
     end
     
     if areaRatio < 0
@@ -35,25 +32,19 @@ for i = 1:size(stats)
         continue;
     end
     
-    if area < 2000
+    if area < 400
         labeledMask(labeledMask == i) = 0;
         continue;
     end
     
-    if width < 40 || height < 40
+    if width < 20 || height < 20
         labeledMask(labeledMask == i) = 0;
         continue;
     end
 end
 
-
-
-SE1 = strel('disk', 2);
-SE2 = strel('disk', 6);
-mask = imopen(labeledMask, SE1);
-mask = imclose(mask, SE2);
+mask = logical(imfill(labeledMask, 'holes'));
 imshow(mask);
-mask = logical(imfill(mask, 'holes'));
 
 end
 

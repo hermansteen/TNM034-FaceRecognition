@@ -1,7 +1,7 @@
 function mouth = findMouth(mouthMapped)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-mouth = mouthMapped > 165/255;
+mouth = mouthMapped > 90/255;
 imshow(mouth)
 
 stats = regionprops(mouth, 'Centroid');
