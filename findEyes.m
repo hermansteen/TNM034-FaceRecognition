@@ -1,11 +1,15 @@
 function eyes = findEyes(eyemapped)
 
-eyemappedB = eyemapped > 200;
-imshow(eyemappedB)
+eyemappedB = eyemapped > 175;
+imshow(eyemappedB);
 
-stats = regionprops(eyemappedB, 'Centroid')
-centroids = cat(1,stats.Centroid)
+stats = regionprops(eyemappedB, 'Centroid', 'Circularity');
+stats = struct2table(stats);
+stats = sortrows(stats, 'Circularity', 'descend');
+stats = table2array(stats)
+
+centroids = stats(1:2,:);
 l = struct("x", floor(centroids(1,1)), "y", floor(centroids(1,2)));
-r = struct("x", floor(centroids(1,2)), "y", floor(centroids(2,2)));
+r = struct("x", floor(centroids(2,1)), "y", floor(centroids(2,2)));
 eyes = struct("l", l, "r", r);
 end
