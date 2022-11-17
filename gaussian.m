@@ -21,11 +21,10 @@ for i = 1:index
     im(1,i) = (exp(prob));
 
 end
+
 image = reshape(im(1,:), height,width);
-
-image = uint8(rescale(image,0,255));
 image = histeq(image);
-
+image = uint8(rescale(image,0,255));
 
 end
 
