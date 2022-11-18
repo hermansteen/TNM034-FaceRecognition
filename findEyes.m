@@ -4,14 +4,30 @@ thresh = 230;
 numEyes = 0;
 while numEyes < 2
     eyemappedB = eyemapped > thresh;
+    
+    %Zero the lower third of image as eyes should not be here
+    %This part may not be required, evaluate
+    %eyemappedB(yLowerThird:y, :) = 0;
+    %[y,x] = size(eyemapped);
+    %yLowerThird = (2/3)*y;
+
+    %imshow(eyemappedB);
+    %lower threshold for binary eyemap
     thresh = thresh - 10;
 
     stats = regionprops(eyemappedB, 'Centroid', 'Circularity');
     stats = struct2table(stats);
-    stats = sortrows(stats, 'Circularity', 'descend');
+    stats.Roundness = abs(stats.Circularity-1);
+    stats = sortrows(stats, 'Roundness', 'ascend')
+    toDelete = stats.Roundness > 0.4;
+    %Discard roundness values far from perfect circle, perfect circle has
+    %roundness = 0
+    stats(toDelete, :) = [];
     stats = table2array(stats);
-    numEyes = length(stats);
+    %find number of eyes to determine whether to loop
+    [numEyes, uselessVariable] = size(stats)
 end
+imshow(eyemappedB);
 
 centroids = stats(1:2,:);
 l = struct("x", floor(centroids(1,1)), "y", floor(centroids(1,2)));
