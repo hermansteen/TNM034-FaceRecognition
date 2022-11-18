@@ -14,12 +14,12 @@ stats = struct2table(stats);
 %stats = sortrows(stats, 'descend');
 stats = table2array(stats);
 
-numMouths = length(stats);
+numMouths = length(stats)
 
 end 
 
 %centroids = cat(1,stats.Centroid);
-centroids = stats(1:2,:);
+centroids = stats(:,:);
 mouth = struct("x", floor(centroids(1,1)), "y", floor(centroids(1,2)));
 end
 
