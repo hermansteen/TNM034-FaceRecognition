@@ -4,7 +4,7 @@ function mouth = findMouth(mouthMapped)
 mouth = mouthMapped > 90/255;
 imshow(mouth)
 
-stats = regionprops(mouth, 'Centroid');
+stats = regionprops(mouth, 'Centroid')
 centroids = cat(1,stats.Centroid);
 mouth = struct("x", floor(centroids(1,1)), "y", floor(centroids(1,2)));
 end
