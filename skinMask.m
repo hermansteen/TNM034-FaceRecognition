@@ -44,7 +44,6 @@ for i = 1:size(stats)
 end
 
 mask = logical(imfill(labeledMask, 'holes'));
-imshow(mask);
 
 end
 

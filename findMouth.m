@@ -6,7 +6,7 @@ numMouths = 0;
 
 while numMouths < 1
 mouthMapp = mouthMapped > mouthThresh/255;
-imshow(mouthMapp);
+%imshow(mouthMapp);
 mouthThresh = mouthThresh - 10;
 
 stats = regionprops(mouthMapp, 'Centroid');

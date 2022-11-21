@@ -22,7 +22,7 @@ function maskedIm = eyemap(im, mask)
     eyeMapC = g*(ccb + ccr + cbcr);
     eyeMapC = histeq(eyeMapC);
 
-    SE = strel('disk', 6);
+    SE = strel('disk', 7);
     o = imdilate(Y,SE);
     p = imerode(Y,SE);
     eyeMapL = o./p;
@@ -30,17 +30,22 @@ function maskedIm = eyemap(im, mask)
     eyeMap = eyeMapC.*eyeMapL;
 
     %Edge density based approach
-    edgeDensitySE = strel('square', 8);
+    edgeDensitySE = strel('disk', 4);
     edgeDensity = edge(gray, "sobel");
     edgeDensity = imdilate(edgeDensity, edgeDensitySE);
     edgeDensity = imdilate(edgeDensity, edgeDensitySE);
     edgeDensity = imerode(edgeDensity, edgeDensitySE);
     edgeDensity = imerode(edgeDensity, edgeDensitySE);
     edgeDensity = imerode(edgeDensity, edgeDensitySE);
-    disp("This is edg")
-    imshow(edgeDensity)
-    
+    %disp("This is edg")
+    %imshow(edgeDensity)
+    edgeDensity = bwpropfilt(edgeDensity, 'Solidity', [0.5 inf]);
+    edgeDensity = imclearborder(edgeDensity, 26);
+
+    %combine all three
     eyeMap = eyeMap.*edgeDensity;
+    %disp("This is eyemap")
+    %imshow(eyeMap)
     maskedIm = imdilate(eyeMap,SE);
     maskedIm = maskedIm.*mask;
     maskedIm = rescale(maskedIm,0,255);

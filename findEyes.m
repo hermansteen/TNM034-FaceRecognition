@@ -1,10 +1,15 @@
 function eyes = findEyes(eyemapped)
 
-thresh = 230;
+thresh = 200;
 numEyes = 0;
 while numEyes < 2
     eyemappedB = eyemapped > thresh;
-    
+    imshow(eyemappedB)
+    eyemappedB = bwpropfilt(eyemappedB, 'Eccentricity', 4, 'smallest');
+    eyemappedB = bwpropfilt(eyemappedB, 'Perimeter', [50 inf]);
+    eyemappedB = imclearborder(imdilate(eyemappedB, strel('square', 3)));
+    imshow(eyemapped > 200)
+    %imshow(eyemappedB);
     %Zero the lower third of image as eyes should not be here
     %This part may not be required, evaluate
     %eyemappedB(yLowerThird:y, :) = 0;
@@ -15,7 +20,7 @@ while numEyes < 2
     %lower threshold for binary eyemap
     thresh = thresh - 10;
 
-    stats = regionprops(eyemappedB, 'Centroid', 'Circularity');
+    stats = regionprops(eyemappedB, 'Centroid', 'Circularity', 'Perimeter');
     stats = struct2table(stats);
     stats.Roundness = abs(stats.Circularity-1);
     stats = sortrows(stats, 'Roundness', 'ascend')
@@ -25,7 +30,7 @@ while numEyes < 2
     stats(toDelete, :) = [];
     stats = table2array(stats);
     %find number of eyes to determine whether to loop
-    [numEyes, uselessVariable] = size(stats)
+    [numEyes, uselessVariable] = size(stats);
 end
 imshow(eyemappedB);
 
