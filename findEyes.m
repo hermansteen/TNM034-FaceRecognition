@@ -23,7 +23,7 @@ while numEyes < 2
     stats = regionprops(eyemappedB, 'Centroid', 'Circularity', 'Perimeter');
     stats = struct2table(stats);
     stats.Roundness = abs(stats.Circularity-1);
-    stats = sortrows(stats, 'Roundness', 'ascend')
+    stats = sortrows(stats, 'Roundness', 'ascend');
     toDelete = stats.Roundness > 0.4;
     %Discard roundness values far from perfect circle, perfect circle has
     %roundness = 0

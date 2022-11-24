@@ -18,4 +18,6 @@ function output = mouthmap(im)
     SE = strel('disk', 10);
     mouthMap = imclose(mouthMap,SE);
     output = mouthMap.*120;
+    [rows,cols] = size(output);
+    output((rows - 20):rows, :) = 0;
 end
