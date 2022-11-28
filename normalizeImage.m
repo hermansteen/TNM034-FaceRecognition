@@ -9,6 +9,7 @@ if eyes.l.x > eyes.r.x
 
     leftX = eyes.r.x;
     rightX = eyes.l.x;
+      
 else
     
     leftY = eyes.l.y;
@@ -19,21 +20,38 @@ else
 
 end
 
+L = [leftX; leftY];
+R = [rightX; rightY];
+M = [mouth.x; mouth.y];
+
 % Rotate image
 deltaX = rightX-leftX;
-hypotenuse = norm([leftX leftY] - [rightX rightY]);
+hypotenuse = norm(L - R);
 % 
 % % Angle between the eyes
-angle = rad2deg(acos(deltaX/hypotenuse));
-
+angle = acosd(deltaX/hypotenuse);
 
 if leftY < rightY
     rotateIm = imrotate(img, angle,'bicubic'); 
+    angle = -angle;
 else
+    
     rotateIm = imrotate(img, -angle,'bicubic'); 
 end
     
-    
+RotMatrix = [cosd(angle) -sind(angle); sind(angle) cosd(angle)]; 
+ImCenterA = (size(img,1,2)/2)';         % Center of the main image
+ImCenterB = (size(rotateIm,1,2)/2)';  % Center of the transformed image
+RotatedL = RotMatrix*(L-ImCenterA)+ImCenterB;
+RotatedR = RotMatrix*(R-ImCenterA)+ImCenterB;
+RotatedM = RotMatrix*(M-ImCenterA)+ImCenterB;
+
+imshow(rotateIm);
+hold on
+plot(RotatedL(1), RotatedL(2), 'b.', 'MarkerSize', 10)
+plot(RotatedR(1), RotatedR(2), 'r.', 'MarkerSize', 10)
+plot(RotatedM(1), RotatedM(2), 'g.', 'MarkerSize', 10)
+hold off
 
 normImage = rotateIm;
 end
