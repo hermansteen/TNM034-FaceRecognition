@@ -17,13 +17,8 @@ end
 
 box = stats(1).BoundingBox;
 x = (box(1) + box(3)/2);
-y = (box(2) + box(4)/2)
+y = (box(2) + box(4)/2);
 
-imshow(mouthMapped);
-hold on
-plot(x, y, 'r.','MarkerSize', 10)
-rectangle('Position', box, 'EdgeColor','r', 'LineWidth', 2)
-hold off
 mouth = struct("x", x, "y", y);
 end
 

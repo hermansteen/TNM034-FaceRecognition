@@ -1,8 +1,17 @@
 function mask = skinMask(image)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-mask = imbinarize(image);
+[rows,cols] = size(image);
+level = graythresh(image);
+level = level - 0.06;
+mask = imbinarize(image, level);
 labeledMask = bwlabel(mask, 8);
+labeledMask(:, 1:40) = 0;
+labeledMask(1:40, :) = 0;
+temp = (cols-40);
+temp2 = (rows - 40);
+labeledMask(:, temp:cols) = 0;
+labeledMask(temp2:rows, :) = 0;
 
 stats = regionprops(mask, 'EulerNumber', 'BoundingBox', 'Area');
 
@@ -11,8 +20,8 @@ for i = 1:size(stats)
     box = stats(i).BoundingBox;
     area = stats(i).Area;
     
-    width = abs(box(3) - (1));
-    height = abs(box(4) - box(2));
+    width = box(3);
+    height = box(4);
     whratio = width/height;
     hwratio = height/width;
     areaRatio = area/(width*height);
@@ -22,7 +31,7 @@ for i = 1:size(stats)
         continue;
     end
     
-    if hwratio < 0.8
+    if hwratio < 0.8 || hwratio > 2.0
         labeledMask(labeledMask == i) = 0;
         continue;
     end
@@ -37,7 +46,7 @@ for i = 1:size(stats)
         continue;
     end
     
-    if width < 20 || height < 20
+    if width < 40 || height < 40
         labeledMask(labeledMask == i) = 0;
         continue;
     end
