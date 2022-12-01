@@ -42,9 +42,9 @@ end
 RotMatrix = [cosd(angle) -sind(angle); sind(angle) cosd(angle)]; 
 ImCenterA = (size(img,1,2)/2)';         % Center of the main image
 ImCenterB = (size(rotateIm,1,2)/2)';  % Center of the transformed image
-RotatedL = RotMatrix*(L-ImCenterA)+ImCenterB;
-RotatedR = RotMatrix*(R-ImCenterA)+ImCenterB;
-RotatedM = RotMatrix*(M-ImCenterA)+ImCenterB;
+RotatedL = floor(RotMatrix*(L-ImCenterA)+ImCenterB);
+RotatedR = floor(RotMatrix*(R-ImCenterA)+ImCenterB);
+RotatedM = floor(RotMatrix*(M-ImCenterA)+ImCenterB);
 
 imshow(rotateIm);
 hold on
@@ -53,5 +53,14 @@ plot(RotatedR(1), RotatedR(2), 'r.', 'MarkerSize', 10)
 plot(RotatedM(1), RotatedM(2), 'g.', 'MarkerSize', 10)
 hold off
 
-normImage = rotateIm;
+[rows, cols] = size(rotateIm);
+
+xLeft = RotatedL(1) - 50;
+xRight = RotatedR(1) + 50;
+yTop = RotatedL(2) - 50;
+yBottom = RotatedM(2) + 50;
+
+croppedImage = rotateIm(yTop:yBottom, xLeft:xRight, :);
+
+normImage = croppedImage;
 end
