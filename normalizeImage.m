@@ -1,4 +1,4 @@
-function normImage = normalize(img, eyes, mouth)
+function normImage = normalizeImage(img, eyes, mouth)
 %NORMALIZE Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -33,6 +33,7 @@ else
     rotateIm = imrotate(img, -angle,'bicubic'); 
 end
     
+
     
 
 normImage = rotateIm;
