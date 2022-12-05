@@ -4,13 +4,13 @@ thresh = 200;
 numEyes = 0;
 [height, width] = size(eyemapped);
 eyemapped(mouthPosition.y:height, :) = 0;
-while numEyes < 2
+while numEyes < 2 && thresh > 0
     eyemappedB = eyemapped > thresh;
     %imshow(eyemappedB)
-    eyemappedB = bwpropfilt(eyemappedB, 'Perimeter', [80 inf]);
-    eyemappedB = bwpropfilt(eyemappedB, 'Eccentricity', [0 0.65]);
+    %eyemappedB = bwpropfilt(eyemappedB, 'Perimeter', [80 inf]);
+    %eyemappedB = bwpropfilt(eyemappedB, 'Eccentricity', [0 0.65]);
     eyemappedB = imclearborder(imdilate(eyemappedB, strel('square', 6)));
-    stats = regionprops(eyemappedB, 'Eccentricity', 'Perimeter')
+    stats = regionprops(eyemappedB, 'Eccentricity', 'Perimeter');
     imshow(eyemappedB)
     %imshow(eyemappedB);
     %Zero the lower third of image as eyes should not be here

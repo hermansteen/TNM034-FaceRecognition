@@ -42,8 +42,31 @@ function maskedIm = eyemap(im, mask)
     edgeDensity = bwpropfilt(edgeDensity, 'Solidity', [0.5 inf]);
     edgeDensity = imclearborder(edgeDensity, 26);
 
+    %colour based method
+    imHist = histeq(rgb2gray(im));
+    imHist = imHist > 40;
+    imHist = imdilate(imHist, strel('disk', 6));
+    imshow(imHist)
+    imHist = bwpropfilt(imHist, 'Solidity', [0.5 inf]);
+    imHist = imclearborder(imHist);
+    imHist = bwpropfilt(imHist, 'Orientation', [-45 45]);
+    stats = regionprops(imHist, 'MinorAxisLength', 'MajorAxisLength', 'BoundingBox');
+    stats = struct2table(stats);
+    stats.AspectRatio = stats.MajorAxisLength / stats.MinorAxisLength;
+    toDelete = stats.AspectRatio < 0.8 & stats.AspectRatio > 4.5;
+    stats(toDelete, :) = [];
+    for i=1:height(stats)
+        bbox = stats(i,:).BoundingBox;
+        x1 = ceil(bbox(1));
+        x2 = round(x1+bbox(3));
+        y1 = ceil(bbox(2));
+        y2 = round(y1+bbox(4));
+        imHist(y1:y2, x1:x2) = 0;
+    end
+
     %combine all three
     eyeMap = eyeMap.*edgeDensity;
+    eyeMap = eyeMap .* imHist;
     %disp("This is eyemap")
     %imshow(eyeMap)
     maskedIm = imdilate(eyeMap,SE);
