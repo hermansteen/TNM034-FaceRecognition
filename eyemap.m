@@ -46,7 +46,7 @@ function maskedIm = eyemap(im, mask)
     imHist = histeq(rgb2gray(im));
     imHist = imHist > 40;
     imHist = imdilate(imHist, strel('disk', 6));
-    imshow(imHist)
+    %imshow(imHist)
     imHist = bwpropfilt(imHist, 'Solidity', [0.5 inf]);
     imHist = imclearborder(imHist);
     imHist = bwpropfilt(imHist, 'Orientation', [-45 45]);
@@ -66,7 +66,7 @@ function maskedIm = eyemap(im, mask)
 
     %combine all three
     eyeMap = eyeMap.*edgeDensity;
-    eyeMap = eyeMap .* imHist;
+    %eyeMap = eyeMap .* imHist;
     %disp("This is eyemap")
     %imshow(eyeMap)
     maskedIm = imdilate(eyeMap,SE);

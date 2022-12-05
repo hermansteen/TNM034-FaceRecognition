@@ -3,7 +3,7 @@ function eyes = findEyes(eyemapped, mouthPosition)
 thresh = 200;
 numEyes = 0;
 [height, width] = size(eyemapped);
-eyemapped(mouthPosition.y:height, :) = 0;
+eyemapped(floor(mouthPosition.y):height, :) = 0;
 while numEyes < 2 && thresh > 0
     eyemappedB = eyemapped > thresh;
     %imshow(eyemappedB)
