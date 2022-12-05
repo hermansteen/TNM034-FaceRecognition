@@ -13,8 +13,6 @@ mask = imclose(mask,SE);
 
 labeledMask = bwlabel(mask, 8);
 
-imshow(labeledMask);
-
 stats = regionprops(mask, 'EulerNumber', 'BoundingBox', 'Area');
 
 for i = 1:size(stats)

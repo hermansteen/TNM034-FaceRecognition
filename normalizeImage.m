@@ -33,34 +33,28 @@ angle = acosd(deltaX/hypotenuse);
 
 if leftY < rightY
     rotateIm = imrotate(img, angle,'bicubic'); 
-    angle = -angle;
-else
     
-    rotateIm = imrotate(img, -angle,'bicubic'); 
+else 
+    angle = -angle;
+    rotateIm = imrotate(img, angle,'bicubic'); 
 end
     
-RotMatrix = [cosd(angle) -sind(angle); sind(angle) cosd(angle)]; 
+RotMatrix = [cosd(angle) sind(angle); -sind(angle) cosd(angle)]; 
 ImCenterA = (size(img,1,2)/2)';         % Center of the main image
 ImCenterB = (size(rotateIm,1,2)/2)';  % Center of the transformed image
 RotatedL = floor(RotMatrix*(L-ImCenterA)+ImCenterB);
 RotatedR = floor(RotMatrix*(R-ImCenterA)+ImCenterB);
 RotatedM = floor(RotMatrix*(M-ImCenterA)+ImCenterB);
 
-imshow(rotateIm);
-hold on
-plot(RotatedL(1), RotatedL(2), 'b.', 'MarkerSize', 10)
-plot(RotatedR(1), RotatedR(2), 'r.', 'MarkerSize', 10)
-plot(RotatedM(1), RotatedM(2), 'g.', 'MarkerSize', 10)
-hold off
-
 [rows, cols] = size(rotateIm);
 
-xLeft = RotatedL(1) - 50;
-xRight = RotatedR(1) + 50;
-yTop = RotatedL(2) - 50;
-yBottom = RotatedM(2) + 50;
+xLeft = RotatedL(1) - 60;
+xRight = RotatedR(1) + 60;
+yTop = RotatedL(2) - 60;
+yBottom = RotatedM(2) + 60;
 
 croppedImage = rotateIm(yTop:yBottom, xLeft:xRight, :);
+croppedImage = imresize(croppedImage, [250, 250]);
 
 normImage = croppedImage;
 end
