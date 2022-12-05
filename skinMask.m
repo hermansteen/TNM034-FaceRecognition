@@ -4,18 +4,16 @@ function mask = skinMask(image)
 [rows,cols] = size(image);
 
 level = graythresh(image);
-level = level - 0.06;
 
 mask = imbinarize(image, level);
 
-temp = (cols-20);
-temp2 = (rows - 20);
-mask(:, 1:20) = 0;
-mask(1:20, :) = 0;
-mask(:, temp:cols) = 0;
-mask(temp2:rows, :) = 0;
+SE = strel('disk', 5);
+SE1 = strel('disk', 4);
+mask = imdilate(mask, SE1);
+mask = imclose(mask,SE);
 
 labeledMask = bwlabel(mask, 8);
+
 stats = regionprops(mask, 'EulerNumber', 'BoundingBox', 'Area');
 
 for i = 1:size(stats)
@@ -54,6 +52,14 @@ for i = 1:size(stats)
         continue;
     end
 end
+
+
+labeledMask(:, 1:80) = 0;
+labeledMask(1:80, :) = 0;
+temp = (cols - 70);
+temp2 = (rows - 20);
+labeledMask(:, temp:cols) = 0;
+labeledMask(floor(3*rows/5):rows, :) = 0;
 
 mask = logical(imfill(labeledMask, 'holes'));
 
