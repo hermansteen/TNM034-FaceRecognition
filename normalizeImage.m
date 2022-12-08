@@ -39,19 +39,47 @@ else
     rotateIm = imrotate(img, angle,'bicubic'); 
 end
     
-RotMatrix = [cosd(angle) sind(angle); -sind(angle) cosd(angle)]; 
-ImCenterA = (size(img,1,2)/2)';         % Center of the main image
-ImCenterB = (size(rotateIm,1,2)/2)';  % Center of the transformed image
-RotatedL = floor(RotMatrix*(L-ImCenterA)+ImCenterB);
-RotatedR = floor(RotMatrix*(R-ImCenterA)+ImCenterB);
-RotatedM = floor(RotMatrix*(M-ImCenterA)+ImCenterB);
+rotMatrix = [cosd(angle) sind(angle); -sind(angle) cosd(angle)]; 
+imCenterA = (size(img,1,2)/2)';         % Center of the main image
+imCenterB = (size(rotateIm,1,2)/2)';  % Center of the transformed image
+rotatedL = floor(rotMatrix*(L-imCenterA)+imCenterB);
+rotatedR = floor(rotMatrix*(R-imCenterA)+imCenterB);
+rotatedM = floor(rotMatrix*(M-imCenterA)+imCenterB);
 
-[rows, cols] = size(rotateIm);
+[width, height] = size(rotateIm);
 
-xLeft = RotatedL(1) - 60;
-xRight = RotatedR(1) + 60;
-yTop = RotatedL(2) - 60;
-yBottom = RotatedM(2) + 60;
+eyePos = floor(rotatedL + ((rotatedR - rotatedL)/2));
+
+
+
+if(abs(eyePos(1) - width) > abs(width-eyePos(1)))
+    padLeft = floor((abs(eyePos(1) - width) - abs(width-eyePos(1))));
+    padRight = 0;
+
+else
+    padRight = floor((abs(width-eyePos(1)) - abs(eyePos(1) - width)));
+    padLeft = 0;
+end
+
+if(abs(eyePos(2) - height) > abs((height-eyePos(2))))
+    padUp = floor(abs((height-eyePos(2)) - abs(eyePos(2) - height)));
+    padDown = 0;
+else
+    padDown = floor(abs(eyePos(2) - height) - abs(height-eyePos(2)));
+    padUp = 0;
+end
+
+padded = padarray(rotateIm, [padUp, padLeft], 0, 'pre');
+padded = padarray(padded, [padDown, padRight], 0, 'post');
+
+imshow(padded);
+
+
+
+xLeft = rotatedL(1) - 60;
+xRight = rotatedR(1) + 60;
+yTop = rotatedL(2) - 60;
+yBottom = rotatedM(2) + 60;
 
 croppedImage = rotateIm(yTop:yBottom, xLeft:xRight, :);
 croppedImage = imresize(croppedImage, [250, 250]);
