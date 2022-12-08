@@ -51,21 +51,20 @@ rotatedM = floor(rotMatrix*(M-imCenterA)+imCenterB);
 eyePos = floor(rotatedL + ((rotatedR - rotatedL)/2));
 
 
-
-if(abs(eyePos(1) - width) > abs(width-eyePos(1)))
-    padLeft = floor((abs(eyePos(1) - width) - abs(width-eyePos(1))));
+if(abs(eyePos(1)) < abs(width-eyePos(1)))
+    padLeft = abs(floor((abs(eyePos(1)) - abs(width-eyePos(1)))));
     padRight = 0;
 
 else
-    padRight = floor((abs(width-eyePos(1)) - abs(eyePos(1) - width)));
+    padRight = ((abs(width-eyePos(1)) - abs(eyePos(1))));
     padLeft = 0;
 end
 
-if(abs(eyePos(2) - height) > abs((height-eyePos(2))))
-    padUp = floor(abs((height-eyePos(2)) - abs(eyePos(2) - height)));
+if(abs(eyePos(2)) < abs((height-eyePos(2))))
+    padUp = abs(floor(abs((height-eyePos(2)) - abs(eyePos(2)))));
     padDown = 0;
 else
-    padDown = floor(abs(eyePos(2) - height) - abs(height-eyePos(2)));
+    padDown = abs(floor(abs(eyePos(2)) - abs(height-eyePos(2))));
     padUp = 0;
 end
 
