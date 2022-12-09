@@ -46,42 +46,51 @@ rotatedL = floor(rotMatrix*(L-imCenterA)+imCenterB);
 rotatedR = floor(rotMatrix*(R-imCenterA)+imCenterB);
 rotatedM = floor(rotMatrix*(M-imCenterA)+imCenterB);
 
-[width, height] = size(rotateIm);
+[height, width, channels] = size(rotateIm);
 
-eyePos = floor(rotatedL + ((rotatedR - rotatedL)/2));
+eyeCenter = floor(rotatedL + ((rotatedR - rotatedL)/2));
 
+paddedL = rotatedL;
+paddedR = rotatedR;
+paddedM = rotatedM;
 
-if(abs(eyePos(1)) < abs(width-eyePos(1)))
-    padLeft = abs(floor((abs(eyePos(1)) - abs(width-eyePos(1)))));
+if eyeCenter(1) < abs(width-eyeCenter(1))
+    padLeft = floor(abs( eyeCenter(1) - abs(width-eyeCenter(1)) ));
     padRight = 0;
 
+    % New x-positions for eyes, mouth, and center
+    paddedL(1) = paddedL(1) + padLeft;
+    paddedR(1) = paddedR(1) + padLeft;
+    paddedM(1) = paddedM(1) + padLeft;
+    eyeCenter(1) = eyeCenter(1) + padLeft;
 else
-    padRight = ((abs(width-eyePos(1)) - abs(eyePos(1))));
+    padRight = floor(abs( abs(width-eyeCenter(1)) - eyeCenter(1) ));
     padLeft = 0;
 end
 
-if(abs(eyePos(2)) < abs((height-eyePos(2))))
-    padUp = abs(floor(abs((height-eyePos(2)) - abs(eyePos(2)))));
+if eyeCenter(2) < abs(height-eyeCenter(2))
+    padUp = floor(abs( eyeCenter(2) - abs(height-eyeCenter(2)) ));
     padDown = 0;
+
+    % New y-positions for eyes, mouth, and center
+    paddedL(2) = paddedL(2) + padUp;
+    paddedR(2) = paddedR(2) + padUp;
+    paddedM(2) = paddedM(2) + padUp;
+    eyeCenter(2) = eyeCenter(2) + padUp;
 else
-    padDown = abs(floor(abs(eyePos(2)) - abs(height-eyePos(2))));
+    padDown = floor(abs( abs(height-eyeCenter(2)) - eyeCenter(2)));
     padUp = 0;
 end
 
 padded = padarray(rotateIm, [padUp, padLeft], 0, 'pre');
 padded = padarray(padded, [padDown, padRight], 0, 'post');
 
-imshow(padded);
+xLeft = floor(eyeCenter(1) - 150);
+xRight = floor(eyeCenter(1) + 150);
+yTop = floor(eyeCenter(2) - 150);
+yBottom = floor(eyeCenter(2) + 200);
 
-
-
-xLeft = rotatedL(1) - 60;
-xRight = rotatedR(1) + 60;
-yTop = rotatedL(2) - 60;
-yBottom = rotatedM(2) + 60;
-
-croppedImage = rotateIm(yTop:yBottom, xLeft:xRight, :);
-croppedImage = imresize(croppedImage, [250, 250]);
+croppedImage = padded(yTop:yBottom, xLeft:xRight, :);
 
 normImage = croppedImage;
 end
