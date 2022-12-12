@@ -35,9 +35,15 @@ while numEyes < 2 && thresh > 0
     [numEyes, uselessVariable] = size(stats);
 end
 %imshow(eyemappedB);
+stats
 
-centroids = stats(1:2,:);
-l = struct("x", floor(centroids(1,1)), "y", floor(centroids(1,2)));
-r = struct("x", floor(centroids(2,1)), "y", floor(centroids(2,2)));
+if (numEyes >= 2)
+    centroids = stats(1:2,:);
+    l = struct("x", floor(centroids(1,1)), "y", floor(centroids(1,2)));
+    r = struct("x", floor(centroids(2,1)), "y", floor(centroids(2,2)));
+else
+    l = struct("x", 0, "y", 0);
+    r = struct("x", 0, "y", 0);
+end
 eyes = struct("l", l, "r", r);
 end
