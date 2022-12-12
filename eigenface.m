@@ -4,62 +4,56 @@ function result = eigenface(trainingSet,image)
 
 threshold = 0.3;
 
-for i=1:16
-    
-    images(:,:,i) = zeros(300);
-
-end
-
-sz = size(images, 3);
-%sz = size(trainingSet(:,:,i) (något smart, vet inte riktigt hur de ser ut)
-M = zeros(300*300, 1);
+[rows,cols,sz] = size(trainingSet); % (något smart, vet inte riktigt hur de ser ut)
+M = zeros(rows*cols, 1);
+imgvec = zeros(rows*cols, sz);
+image = double(reshape(image, rows*cols, 1));
 
 for i=1:sz
     
-    imgvec(:, i) = double(reshape(images(:,:,i), 1,[]));
-    %imgvec(:, i) = double(reshape(trainingSet(:,:,i), 1,[]));
+    %imgvec(:, i) = double(reshape(images(:,:,i), 1,[]));
+    imgvec(:, i) = double(reshape(trainingSet(:,:,i), 1,[]));
     %All images are turned into vectors
     M = M + imgvec(:, i);
     
 end
 
-
-
+% Mean vector M of all the images
 M = M./sz;
-%Mean vector M of all the images
-imgvec(:, :) = imgvec(:, :) - M;
-%Calculating A
 
-%image(:,1) = double(reshape(image(:,:), 1,[]));
-%image = image - M;
+% Calculating A
+imgvec = imgvec - M;
 
-C = imgvec(:,:)' * imgvec(:,:);
-%'Transpose' covariance matrix
+% 'Transpose' covariance matrix
+C = imgvec' * imgvec;
+
+% Eigenvectors to C
 V = eig(C);
-%eigenvectors to C
 
-e = 0;
 for i=1:sz
-    u(:,i) = imgvec(:,i).*V(i,1);
-    %imageOhm(:,i) = u(:,i)*image(:,:);
+    u(:,i) = imgvec(:,i).*V(i);
+end
+
+for i=1:sz
     for j=1:sz
-        weights(j,i) =u(:,i)'*imgvec(:,j);
-        %e = e + abs((weights(j,i) - u(:,i)));
+        imageOhm(j,i) =u(:,j)'*imgvec(:,i);
     end
-    %imageOhm(:,i) = e;
-    %e = 0;
-
 end
 
-index = find(imageOhm == min(imageOhm));
-if imageOhm(index) == 0
+for i=1:sz
+    imageOhmTest(i,1) = u(:,i)'*(image-M);
+end
+
+for i=1:sz
+    dist(i) = norm(imageOhmTest - imageOhm(:,i));
+end
+
+index = find(dist == min(dist));
+
+if dist(index) < threshold
+    result = index;
+else
     result = 0;
-
-end
-
-if imgaeOhm(index) < threshold
-    result = 1;
-else result = 0; 
 end
 
 
@@ -67,13 +61,6 @@ end
 %Check the smallest distance to each images' weights vector.
 %If the smallest distance is below a given threshold the image is in the 
 %training set(dataset)
-
-
-
-
-
-
-
 
 
 %All images are the same size.
@@ -90,30 +77,5 @@ end
 %Phii är Bilden i - M, spara alla w i en vektor ohm
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-outputArg1 = inputArg1;
-outputArg2 = inputArg2;
 end
 

@@ -35,7 +35,6 @@ while numEyes < 2 && thresh > 0
     [numEyes, uselessVariable] = size(stats);
 end
 %imshow(eyemappedB);
-stats
 
 if (numEyes >= 2)
     centroids = stats(1:2,:);
