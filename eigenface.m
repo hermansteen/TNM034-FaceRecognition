@@ -2,12 +2,12 @@ function result = eigenface(trainingSet,image)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-threshold = 1.3 *  10^8;
+threshold = 7.0 *  10^7;
 
 [rows,cols,sz] = size(trainingSet); % (något smart, vet inte riktigt hur de ser ut)
 M = zeros(rows*cols, 1);
 imgvec = zeros(rows*cols, sz);
-image = double(reshape(image, rows*cols, 1));
+imaged = double(reshape(image, rows*cols, 1));
 
 for i=1:sz
     
@@ -41,7 +41,7 @@ for i=1:sz
 end
 
 for i=1:sz
-    imageOhmTest(i,1) = u(:,i)'*(image-M);
+    imageOhmTest(i,1) = u(:,i)'*(imaged-M);
 end
 
 for i=1:sz
@@ -50,6 +50,8 @@ end
 
 index = find(dist == min(dist));
 
+distance = dist(index)
+threshold = threshold
 if dist(index) < threshold
     result = index;
 else

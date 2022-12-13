@@ -4,6 +4,8 @@ function normImage = normalizeImage(img, eyes, mouth)
 % Rescale image
 [height, width, channels] = size(img);
 
+dist = 60.0;
+
 if eyes.l.x == 0 || eyes.l.y == 0 || eyes.r.x == 0 || eyes.r.y == 0
     normImage = zeros(351,301,channels);
 else
@@ -67,13 +69,7 @@ else
     padded = padarray(img, [padUp, padLeft], 0, 'pre');
     padded = padarray(padded, [padDown, padRight], 0, 'post');
 
-% 
-%     imshow(padded);
-%     hold on
-%         plot(paddedL(1), paddedL(2), 'ro', 'MarkerSize', 10);
-%         plot(paddedR(1), paddedR(2), 'go', 'MarkerSize', 10);
-%         plot(paddedM(1), paddedM(2), 'bo', 'MarkerSize', 10);
-%     hold off+
+
 
     % Rotate image
     deltaX = paddedR(1)-paddedL(1);
@@ -98,10 +94,11 @@ else
     rotatedM = floor(rotMatrix*(paddedM-imCenterA)+imCenterB);
     eyeCenter = floor(rotatedL + ((rotatedR - rotatedL)/2));
 
+
+    scale = dist / (eyeCenter(1) - rotatedL(1));
+    rotateIm = imresize(rotateIm, scale);
     
 
-    % Scale image to 750 x 750
-%     rotateIm = imresize(rotateIm, [750 750]);
 %     xle = rotatedL(1)/double(width);
 %     yle = rotatedL(2)/double(height);
 %     xre = rotatedR(1)/double(width);
@@ -115,15 +112,24 @@ else
 %     rotatedR = [width*xre, height*yre];
 %     rotatedM = [width*xm, height*ym];
 
+    eyeCenter = eyeCenter * scale;
 
-    xLeft = floor(imCenterB(2) - 150);
-    xRight = floor(imCenterB(2) + 150);
-    yTop = floor(imCenterB(1) - 100);
-    yBottom = floor(imCenterB(1) + 200);
+    xLeft = floor(eyeCenter(1) - 130);
+    xRight = floor(eyeCenter(1) + 130);
+    yTop = floor(eyeCenter(2) - 100);
+    yBottom = floor(eyeCenter(2) + 200);
 
-    croppedImage = padded(yTop:yBottom, xLeft:xRight, :);
+    croppedImage = rotateIm(yTop:yBottom, xLeft:xRight, :);
+
+    [h,w,c] = size(croppedImage);
+    if h > 301 
+        croppedImage(302,:, :) = [];
+    end
+
+    if w > 261
+        croppedImage(:, 262, :) = [];
+    end
     
-
     normImage = croppedImage;
 end
 end
