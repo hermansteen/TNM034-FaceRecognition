@@ -1,9 +1,10 @@
 function normImage = normalizeImage(img, eyes, mouth)
 %NORMALIZE Summary of this function goes here
 %   Detailed explanation goes here
+% Rescale image
+[height, width, channels] = size(img);
 
 if eyes.l.x == 0 || eyes.l.y == 0 || eyes.r.x == 0 || eyes.r.y == 0
-    [rows, cols, channels] = size(img);
     normImage = zeros(351,301,channels);
 else
 
@@ -29,35 +30,11 @@ else
     R = [rightX; rightY];
     M = [mouth.x; mouth.y];
 
-    % Rotate image
-    deltaX = rightX-leftX;
-    hypotenuse = norm(L - R);
-    % 
-    % % Angle between the eyes
-    angle = acosd(deltaX/hypotenuse);
+    eyeCenter = floor(L + ((R - L)/2));
 
-    if leftY < rightY
-        rotateIm = imrotate(img, angle,'bicubic'); 
-
-    else 
-        angle = -angle;
-        rotateIm = imrotate(img, angle,'bicubic'); 
-    end
-
-    rotMatrix = [cosd(angle) sind(angle); -sind(angle) cosd(angle)]; 
-    imCenterA = (size(img,1,2)/2)';         % Center of the main image
-    imCenterB = (size(rotateIm,1,2)/2)';  % Center of the transformed image
-    rotatedL = floor(rotMatrix*(L-imCenterA)+imCenterB);
-    rotatedR = floor(rotMatrix*(R-imCenterA)+imCenterB);
-    rotatedM = floor(rotMatrix*(M-imCenterA)+imCenterB);
-
-    [height, width, channels] = size(rotateIm);
-
-    eyeCenter = floor(rotatedL + ((rotatedR - rotatedL)/2));
-
-    paddedL = rotatedL;
-    paddedR = rotatedR;
-    paddedM = rotatedM;
+    paddedL = L;
+    paddedR = R;
+    paddedM = M;
 
     if eyeCenter(1) < abs(width-eyeCenter(1))
         padLeft = floor(abs( eyeCenter(1) - abs(width-eyeCenter(1)) ));
@@ -87,15 +64,65 @@ else
         padUp = 0;
     end
 
-    padded = padarray(rotateIm, [padUp, padLeft], 0, 'pre');
+    padded = padarray(img, [padUp, padLeft], 0, 'pre');
     padded = padarray(padded, [padDown, padRight], 0, 'post');
 
-    xLeft = floor(eyeCenter(1) - 150);
-    xRight = floor(eyeCenter(1) + 150);
-    yTop = floor(eyeCenter(2) - 150);
-    yBottom = floor(eyeCenter(2) + 200);
+% 
+%     imshow(padded);
+%     hold on
+%         plot(paddedL(1), paddedL(2), 'ro', 'MarkerSize', 10);
+%         plot(paddedR(1), paddedR(2), 'go', 'MarkerSize', 10);
+%         plot(paddedM(1), paddedM(2), 'bo', 'MarkerSize', 10);
+%     hold off+
+
+    % Rotate image
+    deltaX = paddedR(1)-paddedL(1);
+    hypotenuse = norm(paddedL - paddedR);
+    
+    % % Angle between the eyes
+    angle = acosd(deltaX/hypotenuse);
+
+    if paddedL(2) < paddedR(2)
+        rotateIm = imrotate(padded, angle,'bicubic'); 
+
+    else 
+        angle = -angle;
+        rotateIm = imrotate(padded, angle,'bicubic'); 
+    end
+
+    rotMatrix = [cosd(angle) sind(angle); -sind(angle) cosd(angle)]; 
+    imCenterA = (size(padded,1,2)/2)';         % Center of the main image
+    imCenterB = (size(rotateIm,1,2)/2)';  % Center of the transformed image
+    rotatedL = floor(rotMatrix*(paddedL-imCenterA)+imCenterB);
+    rotatedR = floor(rotMatrix*(paddedR-imCenterA)+imCenterB);
+    rotatedM = floor(rotMatrix*(paddedM-imCenterA)+imCenterB);
+    eyeCenter = floor(rotatedL + ((rotatedR - rotatedL)/2));
+
+    
+
+    % Scale image to 750 x 750
+%     rotateIm = imresize(rotateIm, [750 750]);
+%     xle = rotatedL(1)/double(width);
+%     yle = rotatedL(2)/double(height);
+%     xre = rotatedR(1)/double(width);
+%     yre = rotatedR(2)/double(height);
+%     xm = rotatedM(1)/double(width);
+%     ym = rotatedM(2)/double(height);
+% 
+%     [height, width, channels] = size(rotateIm);
+%    
+%     rotatedL = [width*xle, height*yle];
+%     rotatedR = [width*xre, height*yre];
+%     rotatedM = [width*xm, height*ym];
+
+
+    xLeft = floor(imCenterB(2) - 150);
+    xRight = floor(imCenterB(2) + 150);
+    yTop = floor(imCenterB(1) - 100);
+    yBottom = floor(imCenterB(1) + 200);
 
     croppedImage = padded(yTop:yBottom, xLeft:xRight, :);
+    
 
     normImage = croppedImage;
 end
