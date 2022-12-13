@@ -2,7 +2,7 @@ function result = eigenface(trainingSet,image)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-threshold = 0.3;
+threshold = 1.3 *  10^8;
 
 [rows,cols,sz] = size(trainingSet); % (något smart, vet inte riktigt hur de ser ut)
 M = zeros(rows*cols, 1);
@@ -28,15 +28,15 @@ imgvec = imgvec - M;
 C = imgvec' * imgvec;
 
 % Eigenvectors to C
-V = eig(C);
+[V,D] = eig(C);
 
 for i=1:sz
-    u(:,i) = imgvec(:,i).*V(i);
+    u(:,i) = imgvec*V(:,i);
 end
 
 for i=1:sz
     for j=1:sz
-        imageOhm(j,i) =u(:,j)'*imgvec(:,i);
+        imageOhm(j,i) = u(:,j)'*imgvec(:,i);
     end
 end
 
